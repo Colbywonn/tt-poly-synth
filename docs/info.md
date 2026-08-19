@@ -32,7 +32,7 @@ shaper that produces one of four waveforms:
 | --- | --- |
 | `00` | off (voice silent) |
 | `01` | sawtooth |
-| `10` | square, with selectable pulse width |
+| `10` | square (PWM) |
 | `11` | triangle |
 
 For the square wave, a two-bit PWM field selects the duty cycle (12.5%, 25%, 50%,
@@ -42,7 +42,7 @@ midpoint.
 
 | PWM select | value |
 | --- | --- |
-| `00` | ~12.5% duty | <-- (the division is a bit off, its 
+| `00` | ~12.5% duty |
 | `01` | 25% duty |
 | `10` | 50% duty |
 | `11` | 75% duty |
