@@ -99,6 +99,7 @@ edge before releasing it, so the bit counter settles before the frame commits.
 
 The audio bitstream appears on `uo_out[0]`. Filter it (see below) and the tone is
 audible immediately. Send address 0 with data `0` to silence the voice, or set the wave select to `00`.
+
 As a side note, they will both probably click, but they'll click differently, pick whichever you find less abrasive.
 
 For chords, load different tuning words into addresses 1 and 2 with their configs
