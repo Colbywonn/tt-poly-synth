@@ -1,7 +1,8 @@
 /*
-Date: 08-19-2026
-Author: Colby Miller
-TinyTapeout Sky26c Frozen Version
+Copyright (c) 2026 Colby Miller
+SPDX-License-Identifier: Apache-2.0
+
+TinyTapeout SKY26c frozen version, 2026-08-19
 
 This module is very simple. It adds together the outputs of the three voices, and outputs it.
 */
