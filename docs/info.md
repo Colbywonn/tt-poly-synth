@@ -6,7 +6,7 @@ You can also include images in this folder and reference them in the markdown. E
 512 kb in size, and the combined size of all images must be less than 1 MB.
 -->
 
-## How it Works
+## How It Works
 
 A three-voice polyphonic synthesizer. Each voice is a direct digital synthesis (DDS)
 oscillator, the three voices are summed, and the result leaves the chip as a 1-bit
