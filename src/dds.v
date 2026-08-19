@@ -1,7 +1,8 @@
 /*
-Date: 08-19-2026
-Author: Colby Miller
-TinyTapeout Sky26c Frozen Version
+Copyright (c) 2026 Colby Miller
+SPDX-License-Identifier: Apache-2.0
+
+TinyTapeout SKY26c frozen version, 2026-08-19
 
 This module ties together the entirety of the single-voice DDS core, and its two main sections.
 It has a phase accumulator and a shaper. The output of DDS is signed.
