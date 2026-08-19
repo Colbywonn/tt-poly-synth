@@ -8,9 +8,10 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How It Works
 
-A three-voice polyphonic synthesizer. Each voice is a direct digital synthesis (DDS)
-oscillator, the three voices are summed, and the result leaves the chip as a 1-bit
-sigma-delta bitstream. An external RC filter turns that bitstream back into audio.
+This project is a three-voice polyphonic synthesizer. It works by implementing three direct digital synthesis (DDS)
+oscillators, called voices. The DDS oscillators are given tuning words, as well as config info. They accumulate and modify the signal, defining wave shape. 
+The outputs from the three voices are summed together, and that result leaves the chip as a 1-bit
+sigma-delta bitstream. An external RC filter then turns that bitstream back into beautiful, buzzy audio.
 
 **Note:** The synth features no ADSR or any other audio shaping, so expect artifacts while testing. I'm hoping to polish my design a bit more in v2.0.
 
