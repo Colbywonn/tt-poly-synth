@@ -6,7 +6,7 @@ You can also include images in this folder and reference them in the markdown. E
 512 kb in size, and the combined size of all images must be less than 1 MB.
 -->
 
-## How it works
+## How it Works
 
 A three-voice polyphonic synthesizer. Each voice is a direct digital synthesis (DDS)
 oscillator, the three voices are summed, and the result leaves the chip as a 1-bit
@@ -28,7 +28,7 @@ tuning word 93641; A4 (440 Hz) is 157482.
 **Waveform shaping.** The top 14 bits of each accumulator are tapped and fed to a
 shaper that produces one of four waveforms:
 
-| wave select | output |
+| Wave Select | Output |
 | --- | --- |
 | `00` | off (voice silent) |
 | `01` | sawtooth |
@@ -40,7 +40,7 @@ For the square wave, a two-bit PWM field selects the duty cycle (12.5%, 25%, 50%
 passed straight through; the triangle is produced by folding the tap around its
 midpoint.
 
-| PWM select | value |
+| PWM Select | Duty Value |
 | --- | --- |
 | `00` | 12.5% duty |
 | `01` | 25% duty |
@@ -65,7 +65,7 @@ followed by 32 bits of data, MSB first, SPI mode 0 (clock idles low, data sample
 on the rising edge). The frame commits on the rising edge of chip select, and only
 if exactly 35 bits were received. Anything else just gets thrown away.
 
-| address | register | contents |
+| Address | Register | Contents |
 | --- | --- | --- |
 | 0 | `inc0` | voice 0 tuning word (32 bits) |
 | 1 | `inc1` | voice 1 tuning word (32 bits) |
@@ -84,7 +84,7 @@ SCLK is asynchronous to the system clock, so it is brought into the chip's clock
 domain through two-flop synchronisers plus edge detection. This costs a few clocks
 per SPI edge and sets the maximum SCLK rate (see below). For this use case, the overhead is plenty.
 
-## How to test
+## How to Test
 
 **Timing limits.** SCLK must not exceed one sixth of the system clock — at 12 MHz
 that is a 2 MHz ceiling. Each SCLK phase (high and low) must last at least three
@@ -114,7 +114,7 @@ density that varies periodically is your waveform.
 pitches scale proportionally — recompute tuning words with the formula above.
 The design is entirely agnostic to the tuning word and the frequency.
 
-## External hardware
+## External Hardware
 
 **Reconstruction filter (required to hear anything).** A single RC low-pass on
 `uo_out[0]` with a corner above the audio band is sufficient. 1 kΩ and 6.8 nF
