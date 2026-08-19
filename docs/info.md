@@ -42,7 +42,7 @@ midpoint.
 
 | PWM select | value |
 | --- | --- |
-| `00` | ~12.5% duty |
+| `00` | 12.5% duty |
 | `01` | 25% duty |
 | `10` | 50% duty |
 | `11` | 75% duty |
