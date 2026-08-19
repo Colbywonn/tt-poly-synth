@@ -1,7 +1,8 @@
 /*
-Date: 08-19-2026
-Author: Colby Miller
-TinyTapeout Sky26c Frozen Version
+Copyright (c) 2026 Colby Miller
+SPDX-License-Identifier: Apache-2.0
+
+TinyTapeout SKY26c frozen version, 2026-08-19
 
 This module defines the behavior of the DDS. It takes tap from the phase accumulator module and applies a shape to the wave based off of the config settings.
 The settings are as follows:
