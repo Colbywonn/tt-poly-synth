@@ -42,7 +42,7 @@ midpoint.
 
 | PWM select | value |
 | --- | --- |
-| `00` | ~12.5% duty |
+| `00` | ~12.5% duty | <-- (the division is a bit off, its 
 | `01` | 25% duty |
 | `10` | 50% duty |
 | `11` | 75% duty |
@@ -73,7 +73,7 @@ if exactly 35 bits were received. Anything else just gets thrown away.
 | 3 | `cfg0` | voice 0 config: `[3:2]` wave select, `[1:0]` PWM width |
 | 4 | `cfg1` | voice 1 config |
 | 5 | `cfg2` | voice 2 config |
-| 6, 7 | — | unused, writes ignored |
+| 6, 7 | X | unused, writes ignored |
 
 Registers hold their values indefinitely, so a note sustains until it is
 overwritten. Writing a tuning word of zero freezes that voice's accumulator, which
