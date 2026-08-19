@@ -1,3 +1,12 @@
+/*
+Date: 08-19-2026
+Author: Colby Miller
+TinyTapeout Sky26c Frozen Version
+
+This module ties together the entirety of the single-voice DDS core, and its two main sections.
+It has a phase accumulator and a shaper. The output of DDS is signed.
+*/
+
 module dds (
     input [31:0] inc,
     input rst_n,  //active-low reset
@@ -12,12 +21,13 @@ module dds (
       .clk  (clk),
       .rst_n(rst_n),
       .inc  (inc),
-      .tap  (tap)
+      .tap  (tap) // The top 14 bits of the accumulation.
   );
   shaper shaper (
       .tap(tap),
       .in_cfg(in_cfg),
       .shaped_out(shaped_signal)
   );
-  assign out = {~shaped_signal[13], shaped_signal[12:0]};
+  assign out = {~shaped_signal[13], shaped_signal[12:0]}; // The shaper outputs offset binary, but the mixer needs two's complement. flipping the MSB here converts between the two of them.
 endmodule
+
