@@ -1,3 +1,13 @@
+/*
+Copyright (c) 2026 Colby Miller
+SPDX-License-Identifier: Apache-2.0
+
+TinyTapeout SKY26c frozen version, 2026-08-19
+
+TinyTapeout pin-mapping wrapper around synth_core.
+mosi/sclk/cs_n on ui_in[2:0], audio bitstream on uo_out[0].
+*/
+
 module tt_um_colbywonn_poly_synth (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
