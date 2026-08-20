@@ -1,42 +1,39 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+## Poly Synth v1.0
 
-# Tiny Tapeout Verilog Project Template
+Poly Synth represents my first exploration of RTL and digital design and verification. It is a 3-voice polyphonic synthesizer built for TinyTapeout Sky26c. It has 3 waveforms: square, sawtooth, and triangle. You can customize the duty cycle of the square wave. The chip is controlled via an SPI input, and is outputted via a 1-bit sigma-delta.
 
-- [Read the documentation for project](docs/info.md)
+<img src="docs/die_shot.png" width="45%" alt="Render of Die">
 
-## What is Tiny Tapeout?
+I decided to build this because of a cool experience I had while learning about basic circuits. I discovered that speakers work literally by transposing an electric wave as a sound wave. I hooked alligator clips to a 3.5mm jack and recorded the output of my Analog Discovery 2 waveform generator at different frequencies. I thought it was the coolest thing ever. Ever since then, I've wanted to try building my own synthesizer. Here it is!
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+<img src="docs/poly_synth_fpga.png" height="25%" alt="FPGA on a breadboard">
 
-To learn more and get started, visit https://tinytapeout.com.
+(This is the FPGA model haha)
 
-## Set up your Verilog project
+I built this from scratch, including golden model test benches, which I mutation tested. I also ran gate-level simulations, and finally I ran it on an iCEBreaker FPGA. I was able to drive it to my headphones without amplification! I got it to play a small loop (it's supposed to be the 25m theme from Donkey Kong)
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+[Hear the audio clip](docs/dk_v13.wav)
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+(Supposed to be. It's still a WIP lol.)
 
-## Enable GitHub actions to build the results page
+## Repository layout
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+| Path | Contents |
+| --- | --- |
+| [`docs/info.md`](docs/info.md) | Datasheet: register map, SPI frame format, timing limits, and the external filter you need to hear anything. |
+| `src/` | The RTL. |
+| `test/` | Cocotb testbench, run against both the RTL and the post-layout gate-level netlist. |
+| `info.yaml` | TinyTapeout project config: pinout, tile count, clock. |
 
-## Resources
+### Source files
 
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+| Module | Role |
+| --- | --- |
+| `tt_um_colbywonn_poly_synth.v` | TinyTapeout wrapper. Maps SPI onto `ui_in[2:0]` and the audio bitstream onto `uo_out[0]`. |
+| `synth_core.v` | Top level of the portable core. Wires everything together. |
+| `spi_peripheral.v` | 35-bit SPI receiver, clock domain crossing, and the six control registers. |
+| `dds.v` | One voice: phase accumulator plus shaper. |
+| `phase_acc.v` | 32-bit phase accumulator. Sets pitch. |
+| `shaper.v` | Turns phase into a sawtooth, square (with selectable duty), or triangle. |
+| `mixer.v` | Sums the three voices. |
+| `sigma_delta.v` | First-order modulator. Turns the 16-bit mix into a 1-bit stream. |
