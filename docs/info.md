@@ -12,7 +12,31 @@ This project is a three-voice polyphonic synthesizer. It works by implementing t
 oscillators, called voices. The DDS oscillators are given tuning words, as well as config info. They accumulate and modify the signal, defining wave shape. 
 The outputs from the three voices are summed together, and that result leaves the chip as a 1-bit
 sigma-delta bitstream. An external RC filter then turns that bitstream back into beautiful, buzzy audio.
-
+```
+  mosi ──┐
+  sclk ──┤   ┌──────────────────┐
+  cs_n ──┴──>│  spi_peripheral  │
+             └───┬──────────┬───┘
+       inc0/1/2  │          │  cfg0/1/2
+        (32b)    │          │   (4b)
+                 v          v
+        ┌────────────────────────────┐
+        │  dds0    dds1    dds2      │   phase_acc -> shaper
+        └────┬───────┬───────┬───────┘
+             │       │       │   signed [13:0]
+             v       v       v
+           ┌────────────────────┐
+           │       mixer        │
+           └─────────┬──────────┘
+                     │ signed [15:0]
+                     v
+           ┌────────────────────┐
+           │    sigma_delta     │
+           └─────────┬──────────┘
+                     │ 1-bit stream
+                     v
+                    out   -> external RC filter -> audio
+```
 **Note:** The synth features no ADSR or any other audio shaping, so expect artifacts while testing. I'm hoping to polish my design a bit more in v2.0.
 
 **Voices.** Each voice has a 32-bit phase accumulator that adds a tuning word to
