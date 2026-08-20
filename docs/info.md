@@ -46,7 +46,7 @@ itself every clock. The rate at which the accumulator wraps sets the pitch:
 f_out = tuning_word * f_clk / 2^32
 ```
 
-At the 12 MHz design clock that gives a frequency step of about 0.0028 Hz, so
+12 MHz gives us a frequency step of about 0.0028 Hz, so
 pitch error is far below one cent for any musical note. Middle C (261.63 Hz) is
 tuning word 93641; A4 (440 Hz) is 157482.
 
