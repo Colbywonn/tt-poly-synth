@@ -61,12 +61,12 @@ module spi_peripheral (
       bit_cnt <= 6'b0;
       shift_reg <= 35'b0;
       sclk_on_clk <= 1'b0;
-      cs_n_on_clk <= 1'b1; // Idles high because active-low
+      cs_n_on_clk <= 1'b1;  // Idles high because active-low
       mosi_on_clk <= 1'b0;
       prev_sclk <= 1'b0;
-      prev_cs_n <= 1'b1; // Idles high because active-low
+      prev_cs_n <= 1'b1;  // Idles high because active-low
       ff_sclk <= 1'b0;
-      ff_cs_n <= 1'b1; // Idles high because active-low
+      ff_cs_n <= 1'b1;  // Idles high because active-low
       ff_mosi <= 1'b0;
     end else begin
       // Flip-flops handle domain crossing and store last value for comparison.
@@ -81,10 +81,14 @@ module spi_peripheral (
       mosi_on_clk <= mosi;
       ff_mosi <= mosi_on_clk;
 
-        
-      if (prev_cs_n && !ff_cs_n) bit_cnt <= 6'b0; //Starts the count fresh when CS signals an incoming frame.
+
+
+      if (prev_cs_n && !ff_cs_n)
+        bit_cnt <= 6'b0;  //Starts the count fresh when CS signals an incoming frame.
       else if (!prev_sclk && !ff_cs_n && ff_sclk) begin
-        shift_reg <= {shift_reg[33:0], ff_mosi}; //Using a shift reg because it's cheaper in silicon than a system with a decoder.
+        shift_reg <= {
+          shift_reg[33:0], ff_mosi
+        };  //Using a shift reg because it's cheaper in silicon than a system with a decoder.
         bit_cnt   <= (bit_cnt > 35) ? 6'd36 : bit_cnt + 1'b1; // It stops rather than wrapping because a malformed frame could cause unwanted inputs.
       end
       if ((!prev_cs_n && ff_cs_n) && (bit_cnt == 35)) begin // If bit_cnt != 35, it means the frame was malformed and it should just wait for another.
