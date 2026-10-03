@@ -39,6 +39,13 @@ sigma-delta bitstream. An external RC filter then turns that bitstream back into
 ```
 **Note:** The synth features no ADSR or any other audio shaping, so expect artifacts while testing. I'm hoping to polish my design a bit more in v2.0.
 
+**Demo recordings.** These two clips were recorded from the FPGA prototype. A Python program decodes MIDI songs
+into the tuning words each note needs, then bit-bangs them to a microcontroller that drives the synth.
+
+- ["Overworld" from *The Legend of Zelda*](https://colbywonn.com/assets/audio/overworld.mp3), composed by Koji Kondo
+- ["Vampire Killer" from *Castlevania*](https://colbywonn.com/assets/audio/vampire-killer.mp3), composed by Kinuyo
+  Yamashita and Satoe Terashima for the original game
+
 **Voices.** Each voice has a 32-bit phase accumulator that adds a tuning word to
 itself every clock. The rate at which the accumulator wraps sets the pitch:
 
