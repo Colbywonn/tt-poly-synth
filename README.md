@@ -14,10 +14,6 @@ I decided to build this because of a cool experience I had while learning about 
 
 I built this from scratch, including golden model test benches, which I mutation tested. I also ran gate-level simulations, and finally I ran it on an iCEBreaker FPGA. I was able to drive it to my headphones without amplification! I got it to play a small loop (it's supposed to be the 25m theme from Donkey Kong)
 
-[Hear the audio clip](docs/dk_v13.wav)
-
-(Supposed to be. It's still a WIP lol.)
-
 ## Repository layout
 
 | Path | Contents |
