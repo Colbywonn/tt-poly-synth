@@ -2,6 +2,8 @@
 
 Poly Synth represents my first exploration of RTL and digital design and verification. It is a 3-voice polyphonic synthesizer built for TinyTapeout Sky26c. It has 3 waveforms: square, sawtooth, and triangle. You can customize the duty cycle of the square wave. The chip is controlled via an SPI input, and is outputted via a 1-bit sigma-delta.
 
+[Tiny Tapeout project page](https://tinytapeout.com/chips/ttsky26c/tt_um_colbywonn_poly_synth/)
+
 <img src="docs/die_shot.png" width="45%" alt="Render of Die">
 
 I decided to build this because of a cool experience I had while learning about basic circuits. I discovered that speakers work literally by transposing an electric wave as a sound wave. I hooked alligator clips to a 3.5mm jack and recorded the output of my Analog Discovery 2 waveform generator at different frequencies. I thought it was the coolest thing ever. Ever since then, I've wanted to try building my own synthesizer. Here it is!

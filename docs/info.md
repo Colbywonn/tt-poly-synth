@@ -163,7 +163,7 @@ impedance headphones or a speaker need a small audio amplifier. Volume is also h
 something like a potentiometer set up as a v-divider should work great.
 
 **SPI controller.** Any microcontroller that can bit-bang or drive 35-bit SPI frames
-within the timing limits above. The demo board's RP2040 should get the job done just fine.
+within the timing limits above. The demo board's RP2350 should get the job done just fine.
 
 ```
 uo_out[0] ──[1kΩ]──┬──[1µF]── audio out
