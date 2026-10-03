@@ -12,7 +12,7 @@ I decided to build this because of a cool experience I had while learning about 
 
 (This is the FPGA model haha)
 
-I built this from scratch, including golden model test benches, which I mutation tested. I also ran gate-level simulations, and finally I ran it on an iCEBreaker FPGA. I was able to drive it to my headphones without amplification! I got it to play a small loop (it's supposed to be the 25m theme from Donkey Kong)
+I built this from scratch, including golden model test benches, which I mutation tested. I also ran gate-level simulations, and finally I ran it on an iCEBreaker FPGA. I was able to drive it to my headphones without amplification! Using a Python program to send it MIDI songs, I recorded it playing "Overworld" from The Legend of Zelda and "Vampire Killer" from Castlevania. You can hear both in the [datasheet's demo recordings](docs/info.md).
 
 ## Repository layout
 
