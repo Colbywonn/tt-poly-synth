@@ -1,17 +1,10 @@
-<!---
-This file is used to generate your project datasheet. Please fill in the information below and delete any unused
-sections.
-
-You can also include images in this folder and reference them in the markdown. Each image must be less than
-512 kb in size, and the combined size of all images must be less than 1 MB.
--->
-
 ## How It Works
 
 This project is a three-voice polyphonic synthesizer. It works by implementing three direct digital synthesis (DDS)
-oscillators, called voices. The DDS oscillators are given tuning words, as well as config info. They accumulate and modify the signal, defining wave shape. 
+oscillators, called voices. Each voice accumulates its tuning word into a phase, and a shaper turns that phase into a waveform.
 The outputs from the three voices are summed together, and that result leaves the chip as a 1-bit
 sigma-delta bitstream. An external RC filter then turns that bitstream back into beautiful, buzzy audio.
+
 ```
   mosi ──┐
   sclk ──┤   ┌──────────────────┐
@@ -35,7 +28,7 @@ sigma-delta bitstream. An external RC filter then turns that bitstream back into
            └─────────┬──────────┘
                      │ 1-bit stream
                      v
-                    out   -> external RC filter -> audio
+                 uo_out[0] -> external RC filter -> audio
 ```
 **Note:** The synth features no ADSR or any other audio shaping, so expect artifacts while testing. I'm hoping to polish my design a bit more in v2.0.
 
@@ -53,12 +46,12 @@ itself every clock. The rate at which the accumulator wraps sets the pitch:
 f_out = tuning_word * f_clk / 2^32
 ```
 
-12 MHz gives us a frequency step of about 0.0028 Hz, so
+At 12 MHz, the frequency step is about 0.0028 Hz, so
 pitch error is far below one cent for any musical note. Middle C (261.63 Hz) is
 tuning word 93641; A4 (440 Hz) is 157482.
 
 **Waveform shaping.** The top 14 bits of each accumulator are tapped and fed to a
-shaper that produces one of four waveforms:
+shaper that produces one of three waveforms, or turns the voice off:
 
 | Wave Select | Output |
 | --- | --- |
@@ -102,19 +95,19 @@ if exactly 35 bits were received. Anything else just gets thrown away.
 | 0 | `inc0` | voice 0 tuning word (32 bits) |
 | 1 | `inc1` | voice 1 tuning word (32 bits) |
 | 2 | `inc2` | voice 2 tuning word (32 bits) |
-| 3 | `cfg0` | voice 0 config: `[3:2]` wave select, `[1:0]` PWM width |
+| 3 | `cfg0` | voice 0 config: `[3:2]` wave select, `[1:0]` PWM select |
 | 4 | `cfg1` | voice 1 config |
 | 5 | `cfg2` | voice 2 config |
-| 6, 7 | X | unused, writes ignored |
+| 6, 7 | — | unused, writes ignored |
 
 Registers hold their values indefinitely, so a note sustains until it is
 overwritten. Writing a tuning word of zero freezes that voice's accumulator, which
-silences it. If you want it to function as a traditional synthesizer, make sure to send
-empty tuning words to the voice after you are done playing a note, or by setting wave select to `00`.
+silences it. If you want it to function as a traditional synthesizer, send a tuning word of
+zero to the voice after each note, or set its wave select to `00`.
 
 SCLK is asynchronous to the system clock, so it is brought into the chip's clock
-domain through two-flop synchronisers plus edge detection. This costs a few clocks
-per SPI edge and sets the maximum SCLK rate (see below). For this use case, the overhead is plenty.
+domain through two-flop synchronizers plus edge detection. This costs a few clocks
+per SPI edge and sets the maximum SCLK rate (see below). For this use case, the overhead is negligible.
 
 ## How to Test
 
@@ -123,7 +116,6 @@ that is a 2 MHz ceiling. Each SCLK phase (high and low) must last at least three
 system clocks. Hold chip select low for a few system clocks after the final SCLK
 edge before releasing it, so the bit counter settles before the frame commits.
 
-
 **Making a sound.** Send two frames:
 
 1. Address 3, data `0x0000000C` — sets voice 0 to a triangle wave.
@@ -131,8 +123,6 @@ edge before releasing it, so the bit counter settles before the frame commits.
 
 The audio bitstream appears on `uo_out[0]`. Filter it (see below) and the tone is
 audible immediately. Send address 0 with data `0` to silence the voice, or set the wave select to `00`.
-
-As a side note, they will both probably click, but they'll click differently, pick whichever you find less abrasive.
 
 For chords, load different tuning words into addresses 1 and 2 with their configs
 at addresses 4 and 5.
@@ -144,7 +134,7 @@ density that varies periodically is your waveform.
 
 **Clock.** The design assumes 12 MHz. It will run at other frequencies, but all
 pitches scale proportionally — recompute tuning words with the formula above.
-The design is entirely agnostic to the tuning word and the frequency.
+Nothing in the design depends on a specific clock frequency.
 
 ## External Hardware
 
@@ -153,18 +143,6 @@ The design is entirely agnostic to the tuning word and the frequency.
 gives a corner around 23 kHz. A second identical RC stage in series drops the
 residual noise further, but is not necessary in practice.
 
-**DC blocking capacitor (required).** The filtered signal sits at roughly mid-rail,
-not at ground. Put a series capacitor of 1 µF or more between the filter output and
-whatever you are driving, or you will feed DC into it.
-
-**Output.** The coupled signal drives a line input directly, or high-impedance
-headphones (tested working with 300 Ω headphones straight off the filter while testing with FPGA). Low
-impedance headphones or a speaker need a small audio amplifier. Volume is also handled off-chip, so adding
-something like a potentiometer set up as a v-divider should work great.
-
-**SPI controller.** Any microcontroller that can bit-bang or drive 35-bit SPI frames
-within the timing limits above. The demo board's RP2350 should get the job done just fine.
-
 ```
 uo_out[0] ──[1kΩ]──┬──[1µF]── audio out
                    │
@@ -172,3 +150,17 @@ uo_out[0] ──[1kΩ]──┬──[1µF]── audio out
                    │
                   GND
 ```
+
+**DC blocking capacitor (required).** The filtered signal sits at roughly mid-rail,
+not at ground. Put a series capacitor between the filter output and whatever you
+are driving, or you will feed DC into it. 1 µF is enough for a line input. For
+headphones, use 10 µF or more: with a 300 Ω load, 1 µF cuts everything below
+about 120 Hz, while 10 µF brings that down to about 12 Hz.
+
+**Output.** The coupled signal drives a line input directly, or high-impedance
+headphones (tested with 300 Ω headphones straight off the filter on the FPGA prototype). Low
+impedance headphones or a speaker need a small audio amplifier. Volume is also handled off-chip, so adding
+something like a potentiometer set up as a voltage divider should work great.
+
+**SPI controller.** Any microcontroller that can bit-bang or drive 35-bit SPI frames
+within the timing limits above. The demo board's RP2350 should get the job done just fine.
